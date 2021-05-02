@@ -1025,8 +1025,10 @@ class BoomCore(usingTrace: Boolean)(implicit p: Parameters) extends BoomModule
       Causes.store_page_fault.U,
       Causes.fetch_page_fault.U)
 
-  csr.io.tval := Mux(tval_valid,
+  csr.io.tval := Mux(csr.io.cause === Causes.illegal_instruction.U, rob.io.com_xcpt.bits.debug_inst,
+      Mux(tval_valid,
     RegNext(encodeVirtualAddress(rob.io.com_xcpt.bits.badvaddr, rob.io.com_xcpt.bits.badvaddr)), 0.U)
+    )
 
   // TODO move this function to some central location (since this is used elsewhere).
   def encodeVirtualAddress(a0: UInt, ea: UInt) =

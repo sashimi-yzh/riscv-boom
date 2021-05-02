@@ -145,6 +145,7 @@ class CommitExceptionSignals(implicit p: Parameters) extends BoomBundle
   val pc_lob     = UInt(log2Ceil(icBlockBytes).W)
   val cause      = UInt(xLen.W)
   val badvaddr   = UInt(xLen.W)
+  val debug_inst = UInt(32.W)
 // The ROB needs to tell the FTQ if there's a pipeline flush (and what type)
 // so the FTQ can drive the frontend with the correct redirected PC.
   val flush_typ  = FlushTypes()
@@ -567,6 +568,7 @@ class Rob(
   io.com_xcpt.bits.edge_inst := com_xcpt_uop.edge_inst
   io.com_xcpt.bits.is_rvc    := com_xcpt_uop.is_rvc
   io.com_xcpt.bits.pc_lob    := com_xcpt_uop.pc_lob
+  io.com_xcpt.bits.debug_inst:= com_xcpt_uop.debug_inst
 
   val flush_commit_mask = Range(0,coreWidth).map{i => io.commit.valids(i) && io.commit.uops(i).flush_on_commit}
   val flush_commit = flush_commit_mask.reduce(_|_)
